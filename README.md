@@ -1,4 +1,5 @@
 # Simple Subnetting.
+Licencia: MIT.
 
 ## Descripción.
 Herramienta de línea de comandos que permite subnetear una red.
