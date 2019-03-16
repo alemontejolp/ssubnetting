@@ -15,9 +15,12 @@ func FillArr(arr *[4]int, v, begin, end int) {
   }
 }
 
-//Ordena en orden descendente un slide de enteros.
+// Ordena en orden ascendente las máscaras.
+// De este modo se sigue la convención de subnetear las redes más
+// grandes primero.
 func SortMasks(masks []int) {
-  sort.Sort(sort.Reverse(sort.IntSlice(masks)))
+  //sort.Sort(sort.Reverse(sort.IntSlice(masks)))
+  sort.Ints(masks)
 }
 
 //Copia los octetos de la primera dirección en la segunda.
