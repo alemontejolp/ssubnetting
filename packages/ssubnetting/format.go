@@ -6,6 +6,7 @@ import (
   "strconv"
 )
 
+// Lee y transforma la configuración del subneteo desde la línea de comandos.
 func CaptureData() ([4]int, int, []int, bool) {
   var (
     ip [4]int
@@ -40,6 +41,7 @@ func CaptureData() ([4]int, int, []int, bool) {
   return ip, fMask, hostsReq, true
 }
 
+// Imprime una dirección en formato Dot Decimal Nonation.
 func PrintDDN(a [4]int) {
   l := len(a)
   if(0 < l) {
@@ -50,11 +52,15 @@ func PrintDDN(a [4]int) {
   }
 }
 
+// Despliega una red con formato:
+// [nombre red]: [red]
 func DisplayNet(sn [4]int, message string)  {
   fmt.Printf("%s: ", message)
   PrintDDN(sn)
   fmt.Println()
 }
+
+//Imprie los detalles del subneteo.
 func PrintSubnetting(sn []Subnet)  {
   fmt.Println("Subneteo:")
   fmt.Println("-----------------------------------------")

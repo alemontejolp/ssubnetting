@@ -7,16 +7,20 @@ import (
   "os"
 )
 
+// Llena de lo que se indique, en el rango que se indique, un arreglo
+// de enteros de tamaño 4.
 func FillArr(arr *[4]int, v, begin, end int) {
   for i := begin; i < end; i++ {
     arr[i] = v
   }
 }
 
+//Ordena en orden descendente un slide de enteros.
 func SortMasks(masks []int) {
   sort.Sort(sort.Reverse(sort.IntSlice(masks)))
 }
 
+//Copia los octetos de la primera dirección en la segunda.
 func CopyAddr(soucre [4]int, dest *[4]int)  {
   for i := 0; i < 4; i++ {
     dest[i] = soucre[i]

@@ -1,5 +1,6 @@
 package ssubnetting
 
+//Detalles de una subred.
 type Subnet struct {
   DecMask int
   DDNMask [4]int
