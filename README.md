@@ -23,22 +23,29 @@ Al invocar el programa, se le deben pasar obligatoriamente los flags:
 * -mask
 * -req
 
-donde -ip es la dirección base, -mask es su máscara y -req son la cantidad de
+donde -ip es la dirección base, -mask es su máscara de subred y -req son la cantidad de
 hosts mínimos para cada subred (separados por espacios).
+
+No importa el orden con el que se hayan ingresado los requerimientos, las subredes se desplegarán de más grande a más pequeña.
 
 Entonces, tenemos que el formato de uso es:
 
-"ssubnetting -ip [dirección en formato DDN] -mask [máscara en decimal]
--req [host mínimis en cada subred separados por espacios]"
+```
+ssubnetting -ip [dirección en formato DDN] -mask [máscara en decimal]
+-req [host mínimos en cada subred separados por espacios]
+```
 
-Si el subneteo no es posible hacerse con la configuración inicial dada,
+Si no es posible hacer el subneteo con la configuración inicial dada,
 se deplegará por la salida de error estándar un mensaje indicándolo.
 
 ## Ejemplo.
 
-Al escribir: "ssubnetting -ip 192.168.23.0 -mask 24 -req 60 28 12 6 2 2".
+Al escribir:
+```
+ssubnetting -ip 192.168.23.0 -mask 24 -req 60 28 12 6 2 2
+```
 
-podrás obtener:
+podrás obtener por la salida estándar:
 
 ```
 Subneteo:

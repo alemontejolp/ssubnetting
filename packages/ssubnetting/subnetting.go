@@ -103,7 +103,8 @@ func CalcSubnet(addr [4]int, mask int, last, fusb, lusb *[4]int)  {
   SubAddr(lusb, 1)
 }
 
-//Revisa si
+// Revisa si las subredes requeridas no desbordan la red base.
+// Es decir, si caben en la subred base.
 // bm: base mask, masks[]: las máscaras de cada subred.
 func ValidSubnetting(bm int, masks []int) bool {
   l := len(masks)
