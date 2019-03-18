@@ -42,7 +42,7 @@ Se pueden usar los flags:
 
 * -sort [desc|asc]
 
-" sort " : Ordena las redes antes de subnetear. Si se usa este flag y no se le
+`sort`: Ordena las redes antes de subnetear. Si se usa este flag y no se le
 pasa argumentos, se hará el subneteo desde la red más grande hasta la más
 pequeña (desc). Si se usa (asc) será al revés.
 
