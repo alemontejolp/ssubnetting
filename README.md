@@ -1,5 +1,6 @@
 # Simple Subnetting.
 Licencia: MIT.
+Lenguaje: Go.
 
 ## Descripción.
 Herramienta de línea de comandos que permite subnetear una red.
@@ -26,8 +27,6 @@ Al invocar el programa, se le deben pasar obligatoriamente los flags:
 donde -ip es la dirección base, -mask es su máscara de subred y -req son la cantidad de
 hosts mínimos para cada subred (separados por espacios).
 
-No importa el orden con el que se hayan ingresado los requerimientos, las subredes se desplegarán de más grande a más pequeña.
-
 Entonces, tenemos que el formato de uso es:
 
 ```
@@ -38,8 +37,16 @@ ssubnetting -ip [dirección en formato DDN] -mask [máscara en decimal]
 Si no es posible hacer el subneteo con la configuración inicial dada,
 se deplegará por la salida de error estándar un mensaje indicándolo.
 
-## Ejemplo.
+## Opciones.
+Se pueden usar los flags:
 
+* -sort [desc|asc]
+
+" sort " : Ordena las redes antes de subnetear. Si se usa este flag y no se le
+pasa argumentos, se hará el subneteo desde la red más grande hasta la más
+pequeña (desc). Si se usa (asc) será al revés.
+
+## Ejemplo.
 Al escribir:
 ```
 ssubnetting -ip 192.168.23.0 -mask 24 -req 60 28 12 6 2 2
@@ -98,6 +105,12 @@ Primera dirección usable: 192.168.23.125
 Máscara de subred (Decimal): 30
 Máscara de subred (DDN): 255.255.255.252
 -----------------------------------------
+```
+
+## Compilación.
+En la raíz del proyecto:
+```
+go build ./ssubnetting.go
 ```
 
 ¡Qué les sea útil!

@@ -7,21 +7,27 @@ import (
 )
 
 // Lee y transforma la configuración del subneteo desde la línea de comandos.
-func CaptureData() ([4]int, int, []int, bool) {
+// @return (ip, mask, host requirements, sort, fok)
+func CaptureData() ([4]int, int, []int, string, bool) {
   var (
     ip [4]int
     hostsReq []int
   )
 
-  fIp := GetFlagValue("-ip")
-  fMask, err := strconv.Atoi(GetFlagValue("-mask"))
-  fReq := GetFlagValue("-req")
-  //fmt.Fprintln(os.Stderr, fReq)
+  fIp, _ := GetFlagValue("-ip")
+  strmasks, _ := GetFlagValue("-mask")
+  fMask, err := strconv.Atoi(strmasks)
+  fReq, _ := GetFlagValue("-req")
+  fSort, fse := GetFlagValue("-sort") //fse : Flag Sort Exists.
+
+  if fse && fSort == ""{
+    fSort = "desc"
+  }
 
   if err != nil {
     fMask = 32
     fmt.Fprintln(os.Stderr, "Falló al convertir la máscara a entero.")
-    return ip, fMask, hostsReq, false
+    return ip, fMask, hostsReq, fSort, false
   }
 
   _ip, fok := StrToSeqOfInt(fIp, ".")
@@ -31,14 +37,14 @@ func CaptureData() ([4]int, int, []int, bool) {
     }
   } else {
     fmt.Fprintln(os.Stderr, "Falló al parsear la IP.")
-    return ip, fMask, hostsReq, false
+    return ip, fMask, hostsReq, fSort, false
   }
   hostsReq, fok = StrToSeqOfInt(fReq, " ")
   if !fok {
     fmt.Fprintln(os.Stderr, "Falló al parsear los requerimeintos.")
-    return ip, fMask, hostsReq, false
+    return ip, fMask, hostsReq, fSort, false
   }
-  return ip, fMask, hostsReq, true
+  return ip, fMask, hostsReq, fSort, true
 }
 
 // Imprime una dirección en formato Dot Decimal Nonation.
