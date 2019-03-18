@@ -15,12 +15,16 @@ func FillArr(arr *[4]int, v, begin, end int) {
   }
 }
 
-// Ordena en orden ascendente las máscaras.
-// De este modo se sigue la convención de subnetear las redes más
-// grandes primero.
-func SortMasks(masks []int) {
-  //sort.Sort(sort.Reverse(sort.IntSlice(masks)))
-  sort.Ints(masks)
+// Ordena en orden ascendente o ascendente las redes en función de las máscaras.
+func SortMasks(masks []int, typ string) {
+  switch(typ) {
+  case "desc":
+    sort.Ints(masks)
+    break
+  case "asc":
+    sort.Sort(sort.Reverse(sort.IntSlice(masks)))
+    break
+  }
 }
 
 //Copia los octetos de la primera dirección en la segunda.
@@ -62,14 +66,16 @@ func StrToSeqOfInt(req string, sep string) ([]int, bool){
 }
 
 //Obtene lo que haya después de un argumento de línea de comandos.
-func GetFlagValue(f string) string {
+func GetFlagValue(f string) (string, bool) {
   var r string
   flg := false
+  flgExists := false
   first := true
   l := len(os.Args)
   for i := 0; i < l; i++ {
     if os.Args[i] == f {
       flg = true
+      flgExists = true
     } else if flg && os.Args[i][0] != '-' {
       if first {
         r += os.Args[i]
@@ -81,5 +87,5 @@ func GetFlagValue(f string) string {
       break
     }
   }
-  return r
+  return r, flgExists
 }
