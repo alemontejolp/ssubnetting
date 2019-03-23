@@ -94,24 +94,31 @@ func SubAddr(addr *[4]int, h int)  {
 // last: Dirección de broadcast. Calculada por la función.
 // fusb: primera dirección usable. Calculada por la función.
 // lusb: última dirección usable. Calculada por la función.
-func CalcSubnet(addr [4]int, mask int, last, fusb, lusb *[4]int)  {
+func CalcSubnet(addr [4]int, mask int, last, fusb, lusb *[4]int, hostsav *int)  {
   CopyAddr(addr, last)
   AddAddr(last, HostsByMask(mask) - 1)
   CopyAddr(addr, fusb)
   AddAddr(fusb, 1)
   CopyAddr(*last, lusb)
   SubAddr(lusb, 1)
+  *hostsav = HostsByMask(mask) - 2
+}
+
+//Suma los hosts de todas las máscaras proveidas.
+func SumOfMasks(masks []int) int {
+  l := len(masks)
+  ac := 0
+  for i := 0; i < l; i++ {
+    ac += HostsByMask(masks[i])
+  }
+  return ac;
 }
 
 // Revisa si las subredes requeridas no desbordan la red base.
 // Es decir, si caben en la subred base.
 // bm: base mask, masks[]: las máscaras de cada subred.
 func ValidSubnetting(bm int, masks []int) bool {
-  l := len(masks)
-  ac := 0
-  for i := 0; i < l; i++ {
-    ac += HostsByMask(masks[i])
-  }
+  ac := SumOfMasks(masks)
   return HostsByMask(bm) >= ac
 }
 
@@ -127,18 +134,28 @@ func GetMaskByHostReq(hosts []int) (masks []int)  {
 }
 
 //Dada una ip base y la lista de máscaras, realiza el subneteo de la red.
-func Subnetting(ip [4]int, masks []int) []Subnet {
+//Retorna el arreglo de subredes, la dirección de inicio del bloque
+//restante y los hosts sobrantes. So no hay sobante, la dirección de
+//inicio del bloque restante resán todos ceros.
+func Subnetting(ip [4]int, mask int, masks []int) ([]Subnet, [4]int, int) {
   var currAddr[4]int
   l := len(masks)
   sn := make([]Subnet, l)
   CopyAddr(ip, &currAddr)
   for i := 0; i < l; i++ {
     CopyAddr(currAddr, &sn[i].Id)
-    CalcSubnet(sn[i].Id, masks[i], &sn[i].Broadcast, &sn[i].FirstU, &sn[i].LastU)
+    CalcSubnet(sn[i].Id, masks[i], &sn[i].Broadcast, &sn[i].FirstU, &sn[i].LastU, &sn[i].HostsAvailable)
     CopyAddr(sn[i].Broadcast, &currAddr)
     AddAddr(&currAddr, 1)
     sn[i].DecMask = masks[i]
     DDNMask(&sn[i].DDNMask, masks[i])
   }
-  return sn
+  // leftoverHosts = totalhosts - usedhosts
+  leftoverHosts := HostsByMask(mask) - SumOfMasks(masks)
+  if leftoverHosts == 0 {
+    for i := 0; i < 4; i++ {
+      currAddr[i] = 0
+    }
+  }
+  return sn, currAddr, leftoverHosts
 }

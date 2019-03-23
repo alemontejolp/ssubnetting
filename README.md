@@ -1,6 +1,9 @@
 # Simple Subnetting.
 Licencia: MIT.
+
 Lenguaje: Go.
+
+Versión: 2.1.0
 
 ## Descripción.
 Herramienta de línea de comandos que permite subnetear una red.
@@ -14,6 +17,7 @@ calcula:
 * Última dirección usable.
 * Máscara de subred (Decimal)
 * Máscara de subred (DDN).
+* Direcciones disponibles.
 
 para cada subred requerida.
 
@@ -41,15 +45,20 @@ se deplegará por la salida de error estándar un mensaje indicándolo.
 Se pueden usar los flags:
 
 * -sort [desc|asc]
+* -lo
 
 `sort`: Ordena las redes antes de subnetear. Si se usa este flag y no se le
 pasa argumentos, se hará el subneteo desde la red más grande hasta la más
 pequeña (desc). Si se usa (asc) será al revés.
 
+`lo`: Imprime al final los siguientes datos:
+* Dirección de inicio del bloque sobrante (si los requerimientos no llenaron toda la red).
+* Cantidad de direcciones sobrantes.
+
 ## Ejemplo.
 Al escribir:
 ```
-ssubnetting -ip 192.168.23.0 -mask 24 -req 60 28 12 6 2 2
+ssubnetting -ip 192.168.23.0 -mask 24 -req 60 28 12 6 2 2 -lo
 ```
 
 podrás obtener por la salida estándar:
@@ -64,6 +73,7 @@ Primera dirección usable: 192.168.23.1
 Última dirección usable: 192.168.23.62
 Máscara de subred (Decimal): 26
 Máscara de subred (DDN): 255.255.255.192
+Direcciones disponibles: 62
 -----------------------------------------
 Subred [1]:
 ID de red: 192.168.23.64
@@ -72,6 +82,7 @@ Primera dirección usable: 192.168.23.65
 Última dirección usable: 192.168.23.94
 Máscara de subred (Decimal): 27
 Máscara de subred (DDN): 255.255.255.224
+Direcciones disponibles: 30
 -----------------------------------------
 Subred [2]:
 ID de red: 192.168.23.96
@@ -80,6 +91,7 @@ Primera dirección usable: 192.168.23.97
 Última dirección usable: 192.168.23.110
 Máscara de subred (Decimal): 28
 Máscara de subred (DDN): 255.255.255.240
+Direcciones disponibles: 14
 -----------------------------------------
 Subred [3]:
 ID de red: 192.168.23.112
@@ -88,6 +100,7 @@ Primera dirección usable: 192.168.23.113
 Última dirección usable: 192.168.23.118
 Máscara de subred (Decimal): 29
 Máscara de subred (DDN): 255.255.255.248
+Direcciones disponibles: 6
 -----------------------------------------
 Subred [4]:
 ID de red: 192.168.23.120
@@ -96,6 +109,7 @@ Primera dirección usable: 192.168.23.121
 Última dirección usable: 192.168.23.122
 Máscara de subred (Decimal): 30
 Máscara de subred (DDN): 255.255.255.252
+Direcciones disponibles: 2
 -----------------------------------------
 Subred [5]:
 ID de red: 192.168.23.124
@@ -104,6 +118,10 @@ Primera dirección usable: 192.168.23.125
 Última dirección usable: 192.168.23.126
 Máscara de subred (Decimal): 30
 Máscara de subred (DDN): 255.255.255.252
+Direcciones disponibles: 2
+-----------------------------------------
+Dirección de inicio del bloque sobrante: 192.168.23.128
+Direcciones sobrantes: 128
 -----------------------------------------
 ```
 

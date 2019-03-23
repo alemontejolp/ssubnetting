@@ -8,7 +8,7 @@ import (
 
 func main() {
   //Obtiene las entradas desde la línea de comandos.
-  ip, mask, hostsReq, sort, fok := ssbnt.CaptureData()
+  ip, mask, hostsReq, sort, flo, fok := ssbnt.CaptureData()
   if !fok {
     fmt.Fprintln(os.Stderr, "No es posible hacer el subneteo con esa configuración.")
     return
@@ -25,7 +25,7 @@ func main() {
     return
   }
   //Hace el cálculo de las subredes.
-  subnets := ssbnt.Subnetting(ip, masks)
+  subnets, leftoverAddr, leftoverHosts := ssbnt.Subnetting(ip, mask, masks)
   //Despliega los resultados con formato.
-  ssbnt.PrintSubnetting(subnets)
+  ssbnt.PrintSubnetting(subnets, flo, leftoverAddr, leftoverHosts)
 }

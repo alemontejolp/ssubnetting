@@ -9,4 +9,5 @@ type Subnet struct {
   FirstU [4]int
   LastU [4]int
   HostsU int
+  HostsAvailable int
 }

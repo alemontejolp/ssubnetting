@@ -7,8 +7,8 @@ import (
 )
 
 // Lee y transforma la configuración del subneteo desde la línea de comandos.
-// @return (ip, mask, host requirements, sort, fok)
-func CaptureData() ([4]int, int, []int, string, bool) {
+// @return (ip, mask, host requirements, sort, flo, fok)
+func CaptureData() ([4]int, int, []int, string, bool, bool) {
   var (
     ip [4]int
     hostsReq []int
@@ -19,6 +19,7 @@ func CaptureData() ([4]int, int, []int, string, bool) {
   fMask, err := strconv.Atoi(strmasks)
   fReq, _ := GetFlagValue("-req")
   fSort, fse := GetFlagValue("-sort") //fse : Flag Sort Exists.
+  _, flo := GetFlagValue("-lo") //flo : Flag leftover
 
   if fse && fSort == ""{
     fSort = "desc"
@@ -27,7 +28,7 @@ func CaptureData() ([4]int, int, []int, string, bool) {
   if err != nil {
     fMask = 32
     fmt.Fprintln(os.Stderr, "Falló al convertir la máscara a entero.")
-    return ip, fMask, hostsReq, fSort, false
+    return ip, fMask, hostsReq, fSort, flo, false
   }
 
   _ip, fok := StrToSeqOfInt(fIp, ".")
@@ -37,14 +38,14 @@ func CaptureData() ([4]int, int, []int, string, bool) {
     }
   } else {
     fmt.Fprintln(os.Stderr, "Falló al parsear la IP.")
-    return ip, fMask, hostsReq, fSort, false
+    return ip, fMask, hostsReq, fSort, flo, false
   }
   hostsReq, fok = StrToSeqOfInt(fReq, " ")
   if !fok {
     fmt.Fprintln(os.Stderr, "Falló al parsear los requerimeintos.")
-    return ip, fMask, hostsReq, fSort, false
+    return ip, fMask, hostsReq, fSort, flo, false
   }
-  return ip, fMask, hostsReq, fSort, true
+  return ip, fMask, hostsReq, fSort, flo, true
 }
 
 // Imprime una dirección en formato Dot Decimal Nonation.
@@ -67,7 +68,7 @@ func DisplayNet(sn [4]int, message string)  {
 }
 
 //Imprie los detalles del subneteo.
-func PrintSubnetting(sn []Subnet)  {
+func PrintSubnetting(sn []Subnet, flo bool, leftoverAddr [4]int, leftoverHosts int)  {
   fmt.Println("Subneteo:")
   fmt.Println("-----------------------------------------")
   l := len(sn)
@@ -79,6 +80,14 @@ func PrintSubnetting(sn []Subnet)  {
     DisplayNet(sn[i].LastU, "Última dirección usable")
     fmt.Printf("Máscara de subred (Decimal): %d\n", sn[i].DecMask)
     DisplayNet(sn[i].DDNMask, "Máscara de subred (DDN)")
+    fmt.Printf("Direcciones disponibles: %d\n", sn[i].HostsAvailable)
+    fmt.Println("-----------------------------------------")
+  }
+  if flo {
+    if leftoverHosts != 0 {
+      DisplayNet(leftoverAddr, "Dirección de inicio del bloque sobrante")
+    }
+    fmt.Printf("Direcciones sobrantes: %d\n", leftoverHosts)
     fmt.Println("-----------------------------------------")
   }
 }
