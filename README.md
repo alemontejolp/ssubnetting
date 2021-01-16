@@ -161,7 +161,7 @@ Direcciones sobrantes: 128
 -----------------------------------------
 ```
 
-### Restar hosts a una dirección
+### Sumar o restar hosts a una dirección
 
 Al escribir
 
