@@ -7,11 +7,15 @@ import (
 )
 
 // Lee y transforma la configuración del subneteo desde la línea de comandos.
-// @return (ip, mask, host requirements, sort, flo, fok)
-func CaptureData() ([4]int, int, []int, string, bool, bool) {
+// @return (ip, mask, host requirements, sort, flo, subtr, fok)
+func CaptureData() ([4]int, int, []int, string, bool, int, int, bool) {
   var (
     ip [4]int
     hostsReq []int
+    fSubtr int
+    fsubtrerr error
+    fAdd int
+    fadderr error
   )
 
   fIp, _ := GetFlagValue("-ip")
@@ -19,16 +23,39 @@ func CaptureData() ([4]int, int, []int, string, bool, bool) {
   fMask, err := strconv.Atoi(strmasks)
   fReq, _ := GetFlagValue("-req")
   fSort, fse := GetFlagValue("-sort") //fse : Flag Sort Exists.
-  _, flo := GetFlagValue("-lo") //flo : Flag leftover
+  _, flo := GetFlagValue("-lo") //flo : Flag leftover.
+  strsubtr, fste := GetFlagValue("-subtr") //fste: Flag Subtract Exist.
+  stradd, fadde := GetFlagValue("-add") //fadde: Flag Add Exist.
+
+  if fste {
+    fSubtr, fsubtrerr = strconv.Atoi(strsubtr)
+    if fsubtrerr != nil {
+      subtrErrMsg := "el valor '%s' del parámetro -subtr no es válido por lo cual se omitirá.\n"
+      fmt.Fprintf(os.Stderr, subtrErrMsg, strsubtr)
+      fste = false
+    }
+  }
+
+  if fadde {
+    fAdd, fadderr = strconv.Atoi(stradd)
+    if fadderr != nil {
+      subtrErrMsg := "el valor '%s' del parámetro -add no es válido por lo cual se omitirá.\n"
+      fmt.Fprintf(os.Stderr, subtrErrMsg, stradd)
+      fadde = false
+    }
+  }
+
+  if fadde && fste {
+    msg := "Los flags -subtr y -add no se pueden usar conjuntamente. Se ignoraran."
+    fmt.Fprintln(os.Stderr, msg)
+    fadde = false
+    fste = false
+    fSubtr = 0
+    fAdd = 0
+  }
 
   if fse && fSort == ""{
     fSort = "desc"
-  }
-
-  if err != nil {
-    fMask = 32
-    fmt.Fprintln(os.Stderr, "Falló al convertir la máscara a entero.")
-    return ip, fMask, hostsReq, fSort, flo, false
   }
 
   _ip, fok := StrToSeqOfInt(fIp, ".")
@@ -38,14 +65,22 @@ func CaptureData() ([4]int, int, []int, string, bool, bool) {
     }
   } else {
     fmt.Fprintln(os.Stderr, "Falló al parsear la IP.")
-    return ip, fMask, hostsReq, fSort, flo, false
+    return ip, fMask, hostsReq, fSort, flo, fSubtr, fAdd, false
   }
+
   hostsReq, fok = StrToSeqOfInt(fReq, " ")
-  if !fok {
+  if !fok && !(fste || fadde) {
     fmt.Fprintln(os.Stderr, "Falló al parsear los requerimeintos.")
-    return ip, fMask, hostsReq, fSort, flo, false
+    return ip, fMask, hostsReq, fSort, flo, fSubtr, fAdd, false
   }
-  return ip, fMask, hostsReq, fSort, flo, true
+
+  if err != nil && !(fste || fadde) {
+    fMask = 32
+    fmt.Fprintln(os.Stderr, "Falló al convertir la máscara a entero.")
+    return ip, fMask, hostsReq, fSort, flo, fSubtr, fAdd, false
+  }
+
+  return ip, fMask, hostsReq, fSort, flo, fSubtr, fAdd, true
 }
 
 // Imprime una dirección en formato Dot Decimal Nonation.

@@ -1,12 +1,15 @@
-# Simple Subnetting.
+# Simple Subnetting
 Licencia: MIT.
 
 Lenguaje: Go.
 
-Versión: 2.1.0
+Versión: 2.2.0
 
-## Descripción.
-Herramienta de línea de comandos que permite subnetear una red.
+## Descripción
+Herramienta de línea de comandos que permite subnetear una red,
+además de sumar y restar hosts a una dirección dada.
+
+### Subneteo
 
 Dada una dirección IP, su máscara de subred y los hosts para cada subred,
 calcula:
@@ -21,8 +24,21 @@ calcula:
 
 para cada subred requerida.
 
-## Uso.
-Al invocar el programa, se le deben pasar obligatoriamente los flags:
+### Sumar y restar hosts a una dirección
+
+Dada una dirección ip y una cantidad de hosts, se puede sumar o restar esa
+catidad de hosts a la dirección proporcionada.
+
+Ejemplo: 192.168.1.0 - 16 = 192.168.0.240
+
+Ejemplo: 192.168.1.0 + 16 = 192.168.1.16
+
+## Uso
+
+### Subneteo
+
+Al invocar el programa, para hacer un subneteo,
+se le deben pasar obligatoriamente los flags:
 
 * -ip
 * -mask
@@ -34,15 +50,32 @@ hosts mínimos para cada subred (separados por espacios).
 Entonces, tenemos que el formato de uso es:
 
 ```
-ssubnetting -ip [dirección en formato DDN] -mask [máscara en decimal]
+ssbnt -ip [dirección en formato DDN] -mask [máscara en decimal]
 -req [host mínimos en cada subred separados por espacios]
 ```
 
 Si no es posible hacer el subneteo con la configuración inicial dada,
 se deplegará por la salida de error estándar un mensaje indicándolo.
 
-## Opciones.
-Se pueden usar los flags:
+### Sumar y restar hosts a una dirección.
+
+Al invocar el programa, para hacer una suma o resta a una dirección,
+se le deben pasar obligatoriamente los flags:
+
+* -ip
+* -subtr | -add
+
+Se puede usar `-subtr` para restar y `-add` para sumar. No se deben usar
+juntos en una misma ejecución o se ignorarán.
+
+```
+ssbnt -ip [dirección en formato DDN] -subtr [cantidad de hosts a restar]
+
+ssbnt -ip [dirección en formato DDN] -add [cantidad de hosts a sumar]
+```
+
+## Opciones
+Con respecto al subnetero, se pueden usar los flags:
 
 * -sort [desc|asc]
 * -lo
@@ -55,10 +88,13 @@ pequeña (desc). Si se usa (asc) será al revés.
 * Dirección de inicio del bloque sobrante (si los requerimientos no llenaron toda la red).
 * Cantidad de direcciones sobrantes.
 
-## Ejemplo.
+## Ejemplo
+
+### Subneteo
+
 Al escribir:
 ```
-ssubnetting -ip 192.168.23.0 -mask 24 -req 60 28 12 6 2 2 -lo
+ssbnt -ip 192.168.23.0 -mask 24 -req 60 28 12 6 2 2 -lo
 ```
 
 podrás obtener por la salida estándar:
@@ -125,10 +161,37 @@ Direcciones sobrantes: 128
 -----------------------------------------
 ```
 
-## Compilación.
-En la raíz del proyecto:
+### Restar hosts a una dirección
+
+Al escribir
+
 ```
-go build ./ssubnetting.go
+ssbnt -ip 192.168.1.0 -subtr 16
+```
+
+Podrás obtener
+
+```
+Cantidad de hosts restados: 16
+Dirección: 192.168.0.240
+```
+
+Al escribir
+
+```
+ssbnt -ip 192.168.1.0 -add 16
+```
+
+```
+Cantidad de hosts sumados: 16
+Dirección: 192.168.1.16
+```
+
+## Compilación
+En la raíz del proyecto:
+
+```
+go build -o ssbnt ./ssubnetting.go
 ```
 
 ¡Qué les sea útil!

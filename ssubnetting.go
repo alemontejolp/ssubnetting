@@ -8,11 +8,35 @@ import (
 
 func main() {
   //Obtiene las entradas desde la línea de comandos.
-  ip, mask, hostsReq, sort, flo, fok := ssbnt.CaptureData()
+  ip, mask, hostsReq, sort, flo, subtr, add, fok := ssbnt.CaptureData()
+
   if !fok {
     fmt.Fprintln(os.Stderr, "No es posible hacer el subneteo con esa configuración.")
     return
   }
+
+  //Revisar si la accion es restar hosts a una dirección.  
+  if subtr != 0 {
+    fmt.Printf("Cantidad de hosts restados: %d\n", subtr)
+    //Realizar resta.
+    ssbnt.SubAddr(&ip, subtr)
+    fmt.Print("Dirección: ")
+    ssbnt.PrintDDN(ip)
+    fmt.Println()
+    return
+  }
+
+  //Revisar si la accion es sumar hosts a una dirección.  
+  if add != 0 {
+    fmt.Printf("Cantidad de hosts sumados: %d\n", add)
+    //Realizar resta.
+    ssbnt.AddAddr(&ip, add)
+    fmt.Print("Dirección: ")
+    ssbnt.PrintDDN(ip)
+    fmt.Println()
+    return
+  }
+
   //Obtiene la máscara mínima para cada requerimiento de host.
   masks := ssbnt.GetMaskByHostReq(hostsReq)
   if sort != "" {
